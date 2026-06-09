@@ -1,0 +1,11 @@
+{
+  "experimentalServices": {
+    "frontend": {
+      "root": "frontend",
+      "routePrefix": "/",
+      "framework": "nextjs"
+    }
+  },
+  "buildCommand": "npm install --ignore-scripts && npm run build",
+  "installCommand": "npm install --ignore-scripts"
+}
