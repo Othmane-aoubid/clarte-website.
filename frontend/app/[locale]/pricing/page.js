@@ -37,8 +37,9 @@ export async function generateMetadata({ params: { locale } }) {
   }
 }
 
-export default function PricingPage({ params: { locale } }) {
+export default async function PricingPage({ params: { locale } }) {
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'pricing' })
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -112,8 +113,8 @@ export default function PricingPage({ params: { locale } }) {
 
       <section className="bg-gradient-to-br from-brand-900 to-brand-700 py-20">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Nos Tarifs</h1>
-          <p className="text-xl text-brand-100">Transparents, sans frais cachés, adaptés à vos besoins</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-brand-100">{t('subtitle')}</p>
         </div>
       </section>
 
@@ -122,7 +123,7 @@ export default function PricingPage({ params: { locale } }) {
       {/* Comparison table */}
       <section className="py-20 bg-white dark:bg-[rgb(13,17,23)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white text-center mb-10">Comparaison détaillée</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white text-center mb-10">{t('comparison_title')}</h2>
           <div className="rounded-card overflow-hidden border border-slate-200 dark:border-slate-700">
             <table className="w-full text-sm">
               <thead>

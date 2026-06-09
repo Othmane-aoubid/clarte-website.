@@ -26,8 +26,9 @@ export async function generateMetadata({ params: { locale } }) {
   }
 }
 
-export default function ContactPage({ params: { locale } }) {
+export default async function ContactPage({ params: { locale } }) {
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'contact' })
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -87,8 +88,8 @@ export default function ContactPage({ params: { locale } }) {
 
       <section className="bg-gradient-to-br from-brand-900 to-brand-700 py-20">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Contactez-nous</h1>
-          <p className="text-xl text-brand-100">Notre équipe vous répond sous 24h</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-brand-100">{t('subtitle')}</p>
         </div>
       </section>
 

@@ -54,8 +54,9 @@ export async function generateMetadata({ params: { locale } }) {
   }
 }
 
-export default function FAQPage({ params: { locale } }) {
+export default async function FAQPage({ params: { locale } }) {
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'faq' })
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -87,8 +88,8 @@ export default function FAQPage({ params: { locale } }) {
 
       <section className="bg-gradient-to-br from-brand-900 to-brand-700 py-20">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Questions fréquentes</h1>
-          <p className="text-xl text-brand-100">Tout ce que vous devez savoir sur nos services</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-brand-100">{t('subtitle')}</p>
         </div>
       </section>
 

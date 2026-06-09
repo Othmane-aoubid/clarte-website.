@@ -45,8 +45,9 @@ export async function generateMetadata({ params: { locale } }) {
   }
 }
 
-export default function ServicesPage({ params: { locale } }) {
+export default async function ServicesPage({ params: { locale } }) {
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'services' })
 
   // ── BreadcrumbList ─────────────────────────────────────────────────────────
   const breadcrumbSchema = {
@@ -111,8 +112,8 @@ export default function ServicesPage({ params: { locale } }) {
       {/* Hero */}
       <section className="bg-gradient-to-br from-brand-900 to-brand-700 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Nos Services</h1>
-          <p className="text-xl text-brand-100 max-w-2xl mx-auto">Des solutions de nettoyage adaptées à tous vos besoins, partout en France.</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-brand-100 max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
       </section>
 
@@ -129,14 +130,14 @@ export default function ServicesPage({ params: { locale } }) {
                   </div>
                 </div>
                 <div className="p-6">
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{SERVICE_NAMES[key]}</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 leading-relaxed">{description}</p>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t(`${key}.name`)}</h2>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 leading-relaxed">{t(`${key}.description`)}</p>
                   <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-5">
                     <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" aria-hidden="true" /> {duration} min</span>
                     <span className="flex items-center gap-1.5"><Tag   className="w-4 h-4" aria-hidden="true" /> À partir de {price}€</span>
                   </div>
                   <Link href={`/${locale}/booking`} className="flex items-center justify-center gap-2 w-full py-3 bg-brand-600 text-white font-semibold rounded-button hover:bg-brand-700 transition-colors">
-                    Réserver ce service <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                    {t('book_service')} <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>
                 </div>
               </article>

@@ -4,6 +4,8 @@ from app.core.config import settings
 
 
 engine = create_async_engine(settings.DATABASE_URL, echo=False, pool_pre_ping=True)
+# Alias used by the seed script
+async_engine = engine
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 

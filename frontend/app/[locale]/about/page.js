@@ -25,8 +25,9 @@ export async function generateMetadata({ params: { locale } }) {
   }
 }
 
-export default function AboutPage({ params: { locale } }) {
+export default async function AboutPage({ params: { locale } }) {
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'about' })
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -103,8 +104,8 @@ export default function AboutPage({ params: { locale } }) {
       {/* Hero */}
       <section className="bg-gradient-to-br from-brand-900 to-brand-700 py-20">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">À propos de Clarté</h1>
-          <p className="text-xl text-brand-100 max-w-2xl mx-auto">Notre histoire, nos valeurs, notre engagement</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-brand-100 max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
       </section>
 
@@ -113,7 +114,7 @@ export default function AboutPage({ params: { locale } }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Notre histoire</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">{t('story_title')}</h2>
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-5">
                 Fondée en 2014, Clarté est née d'une conviction simple : chaque foyer mérite un environnement sain et impeccable. En dix ans, nous avons accompagné plus de 500 clients dans toute la France.
               </p>
@@ -144,7 +145,7 @@ export default function AboutPage({ params: { locale } }) {
       {/* Values */}
       <section className="py-20 bg-slate-50 dark:bg-[rgb(22,27,34)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white text-center mb-14">Nos Valeurs</h2>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white text-center mb-14">{t('values_title')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { title: 'Excellence', desc: 'Nous ne nous contentons pas du bon — nous visons le parfait.', emoji: '🏆' },

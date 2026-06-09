@@ -5,9 +5,11 @@ import Link from 'next/link'
 import {
   CheckCircle, ChevronRight, ChevronLeft, Sparkles,
   Home, Building2, Hammer, Wind, Truck, ShieldCheck,
-  Calendar, Clock, MapPin, CreditCard,
+  Calendar, Clock, MapPin, CreditCard, Loader2, AlertCircle,
+  User, Mail, Phone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { apiFetch } from '@/lib/api'
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
@@ -33,9 +35,11 @@ function StepIndicator({ current }) {
         <div key={i} className="flex items-center">
           <div className={cn(
             'flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold border-2 transition-all',
-            i < current  ? 'bg-brand-600 border-brand-600 text-white'
-            : i === current ? 'bg-white dark:bg-slate-900 border-brand-600 text-brand-600'
-            : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-400'
+            i < current
+              ? 'bg-brand-600 border-brand-600 text-white'
+              : i === current
+                ? 'bg-white dark:bg-slate-900 border-brand-600 text-brand-600'
+                : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-400'
           )}>
             {i < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
           </div>
@@ -134,7 +138,7 @@ function StepDateTime({ booking, setBooking }) {
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
           {days.map((d, i) => {
-            const iso = d.toISOString().split('T')[0]
+            const iso   = d.toISOString().split('T')[0]
             const label = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
             return (
               <button
@@ -183,65 +187,90 @@ function StepDateTime({ booking, setBooking }) {
   )
 }
 
-// ─── Step 3 — Address ─────────────────────────────────────────────────────────
+// ─── Step 3 — Address + Contact ───────────────────────────────────────────────
 
 function StepAddress({ booking, setBooking }) {
   const t = useTranslations('booking')
 
-  const Field = ({ name, label, type = 'text', span = false }) => (
+  const TextField = ({ name, label, type = 'text', required = false, span = false, icon: Icon }) => (
     <div className={span ? 'sm:col-span-2' : ''}>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{label}</label>
-      <input
-        type={type}
-        value={booking[name] || ''}
-        onChange={e => setBooking(b => ({ ...b, [name]: e.target.value }))}
-        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-      />
+      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      <div className="relative">
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />}
+        <input
+          type={type}
+          value={booking[name] || ''}
+          onChange={e => setBooking(b => ({ ...b, [name]: e.target.value }))}
+          className={cn(
+            'w-full py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500',
+            Icon ? 'pl-9 pr-3' : 'px-3'
+          )}
+        />
+      </div>
     </div>
   )
 
   return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-        <MapPin className="w-5 h-5 text-brand-600" />
-        {t('step3_title')}
-      </h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field name="street" label={t('address_street')} span />
-        <Field name="city"   label={t('address_city')} />
-        <Field name="postal" label={t('address_postal')} />
-        <Field name="floor"  label={t('address_floor')} />
-        <Field name="sqm"    label={t('address_sqm')} type="number" />
-
-        <div>
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('address_elevator')}</p>
-          <div className="flex gap-3">
-            {[{ label: 'Oui', val: true }, { label: 'Non', val: false }].map(({ label, val }) => (
-              <button
-                key={label}
-                onClick={() => setBooking(b => ({ ...b, elevator: val }))}
-                className={cn(
-                  'px-6 py-2 rounded-lg text-sm font-medium border transition-colors',
-                  booking.elevator === val
-                    ? 'bg-brand-600 text-white border-brand-600'
-                    : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-brand-400'
-                )}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+    <div className="space-y-8">
+      {/* Contact info section */}
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+          <User className="w-5 h-5 text-brand-600" />
+          {t('step3_contact_title')}
+        </h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('step3_contact_desc')}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TextField name="guestName"  label={t('contact_name')}  required icon={User}  span />
+          <TextField name="guestEmail" label={t('contact_email')} required icon={Mail}  type="email" />
+          <TextField name="guestPhone" label={t('contact_phone')} required icon={Phone} type="tel" />
         </div>
+      </div>
 
-        <div className="sm:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('address_notes')}</label>
-          <textarea
-            rows={3}
-            value={booking.notes || ''}
-            onChange={e => setBooking(b => ({ ...b, notes: e.target.value }))}
-            className="w-full px-3 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
-          />
+      {/* Address section */}
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-brand-600" />
+          {t('step3_title')}
+        </h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('step3_address_desc')}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TextField name="street" label={t('address_street')} required span />
+          <TextField name="city"   label={t('address_city')}   required />
+          <TextField name="postal" label={t('address_postal')} required />
+          <TextField name="floor"  label={t('address_floor')} />
+          <TextField name="sqm"    label={t('address_sqm')} type="number" />
+
+          <div>
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('address_elevator')}</p>
+            <div className="flex gap-3">
+              {[{ label: 'Oui', val: true }, { label: 'Non', val: false }].map(({ label, val }) => (
+                <button
+                  key={label}
+                  onClick={() => setBooking(b => ({ ...b, elevator: val }))}
+                  className={cn(
+                    'px-6 py-2 rounded-lg text-sm font-medium border transition-colors',
+                    booking.elevator === val
+                      ? 'bg-brand-600 text-white border-brand-600'
+                      : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-brand-400'
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('address_notes')}</label>
+            <textarea
+              rows={3}
+              value={booking.notes || ''}
+              onChange={e => setBooking(b => ({ ...b, notes: e.target.value }))}
+              className="w-full px-3 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -250,13 +279,14 @@ function StepAddress({ booking, setBooking }) {
 
 // ─── Step 4 — Summary ─────────────────────────────────────────────────────────
 
-function StepSummary({ booking }) {
+function StepSummary({ booking, error }) {
   const t = useTranslations('booking')
 
   const rows = [
     { label: t('summary_service'),  value: booking.serviceName || '—' },
     { label: t('frequency_label'),  value: t(`frequency_${booking.frequency || 'once'}`) },
     { label: t('summary_date'),     value: booking.date ? `${booking.date}  ${booking.time || ''}` : '—' },
+    { label: t('summary_contact'),  value: booking.guestName ? `${booking.guestName} · ${booking.guestEmail}` : '—' },
     { label: t('summary_address'),  value: booking.street ? `${booking.street}, ${booking.postal} ${booking.city}` : '—' },
     { label: t('summary_duration'), value: booking.duration ? `${booking.duration} min` : '—' },
   ]
@@ -287,9 +317,16 @@ function StepSummary({ booking }) {
         </div>
       </div>
 
+      {error && (
+        <div className="mt-4 flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
       <p className="mt-4 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
         <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-        Paiement sécurisé. Aucun frais supplémentaire.
+        Réservation sans paiement immédiat. Notre équipe vous contactera pour confirmer.
       </p>
     </div>
   )
@@ -297,9 +334,8 @@ function StepSummary({ booking }) {
 
 // ─── Confirmation ─────────────────────────────────────────────────────────────
 
-function Confirmation({ locale }) {
-  const t   = useTranslations('booking')
-  const ref = `CLT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
+function Confirmation({ locale, reference, email }) {
+  const t = useTranslations('booking')
 
   return (
     <div className="text-center py-8">
@@ -308,9 +344,11 @@ function Confirmation({ locale }) {
       </div>
       <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{t('confirmation_title')}</h2>
       <p className="text-brand-600 dark:text-brand-400 font-semibold mb-2">
-        {t('confirmation_ref', { ref })}
+        {t('confirmation_ref', { ref: reference })}
       </p>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">{t('confirmation_email')}</p>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">
+        {t('confirmation_email_sent', { email: email || '' })}
+      </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href={`/${locale}/booking`}
@@ -322,7 +360,7 @@ function Confirmation({ locale }) {
           href={`/${locale}`}
           className="px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-button hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
         >
-          {t('confirmation_my_bookings')}
+          {t('back_home')}
         </Link>
       </div>
     </div>
@@ -333,22 +371,70 @@ function Confirmation({ locale }) {
 
 export default function BookingPage({ params: { locale } }) {
   const t = useTranslations('booking')
-  const [step, setStep]       = useState(0)          // 0–3 wizard, 4 confirmed
-  const [booking, setBooking] = useState({ frequency: 'once' })
+  const [step, setStep]             = useState(0)   // 0–3 wizard, 4 confirmed
+  const [booking, setBooking]       = useState({ frequency: 'once', elevator: false })
+  const [loading, setLoading]       = useState(false)
+  const [error, setError]           = useState(null)
+  const [confirmed, setConfirmed]   = useState(null)  // { reference, email }
 
   const canAdvance = () => {
     if (step === 0) return !!booking.serviceId
     if (step === 1) return !!(booking.date && booking.time)
-    if (step === 2) return !!(booking.street && booking.city && booking.postal)
+    if (step === 2) return !!(
+      booking.guestName?.trim() &&
+      booking.guestEmail?.trim() &&
+      booking.guestPhone?.trim() &&
+      booking.street?.trim() &&
+      booking.city?.trim() &&
+      booking.postal?.trim()
+    )
     return true
   }
 
-  if (step === 4) {
+  const handleConfirm = async () => {
+    setLoading(true)
+    setError(null)
+
+    const payload = {
+      guest_name:       booking.guestName,
+      guest_email:      booking.guestEmail,
+      guest_phone:      booking.guestPhone,
+      service_slug:     booking.serviceId,
+      scheduled_date:   booking.date,
+      scheduled_time:   booking.time,
+      duration_minutes: booking.duration || 120,
+      frequency:        booking.frequency || 'once',
+      total_price:      booking.price,
+      notes:            booking.notes || null,
+      street:           booking.street,
+      city:             booking.city,
+      postal_code:      booking.postal,
+      area_sqm:         booking.sqm ? parseInt(booking.sqm, 10) : null,
+      floor:            booking.floor ? parseInt(booking.floor, 10) : null,
+      elevator:         booking.elevator || false,
+    }
+
+    try {
+      const result = await apiFetch('/bookings', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      })
+      setConfirmed({ reference: result.reference, email: result.guest_email })
+      setStep(4)
+    } catch (err) {
+      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ── Confirmed screen ────────────────────────────────────────────────────────
+  if (step === 4 && confirmed) {
     return (
       <main className="min-h-screen pt-16 bg-slate-50 dark:bg-[rgb(13,17,23)]">
         <div className="max-w-2xl mx-auto px-4 py-16">
           <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-card p-8">
-            <Confirmation locale={locale} />
+            <Confirmation locale={locale} reference={confirmed.reference} email={confirmed.email} />
           </div>
         </div>
       </main>
@@ -376,15 +462,16 @@ export default function BookingPage({ params: { locale } }) {
           {step === 0 && <StepService  booking={booking} setBooking={setBooking} />}
           {step === 1 && <StepDateTime booking={booking} setBooking={setBooking} />}
           {step === 2 && <StepAddress  booking={booking} setBooking={setBooking} />}
-          {step === 3 && <StepSummary  booking={booking} />}
+          {step === 3 && <StepSummary  booking={booking} error={error} />}
 
           {/* Nav buttons */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100 dark:border-slate-700">
 
             {step > 0 ? (
               <button
-                onClick={() => setStep(s => s - 1)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                onClick={() => { setStep(s => s - 1); setError(null) }}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-4 h-4" />
                 {t('back')}
@@ -400,17 +487,19 @@ export default function BookingPage({ params: { locale } }) {
             )}
 
             <button
-              onClick={() => step < 3 ? setStep(s => s + 1) : setStep(4)}
-              disabled={!canAdvance()}
+              onClick={step < 3 ? () => setStep(s => s + 1) : handleConfirm}
+              disabled={!canAdvance() || loading}
               className={cn(
                 'flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-button transition-all',
-                canAdvance()
+                canAdvance() && !loading
                   ? 'bg-brand-600 text-white hover:bg-brand-700 shadow-button'
                   : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
               )}
             >
-              {step === 3 ? (
-                <><CreditCard className="w-4 h-4" />{t('pay_now')}</>
+              {loading ? (
+                <><Loader2 className="w-4 h-4 animate-spin" />{t('submitting')}</>
+              ) : step === 3 ? (
+                <><CreditCard className="w-4 h-4" />{t('confirm_booking')}</>
               ) : (
                 <>{t('next')}<ChevronRight className="w-4 h-4" /></>
               )}
