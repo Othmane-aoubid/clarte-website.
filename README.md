@@ -160,8 +160,8 @@ clarte/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/Othmane-aoubid/clarte-website..git
-cd clarte-website.
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 ```
 
 ### 2. Frontend setup
@@ -201,25 +201,29 @@ docker compose up --build
 
 ### Frontend (`frontend/.env.local`)
 
+Copy `frontend/.env.example` and fill in your values:
+
 ```env
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your-gsv-code
+NEXT_PUBLIC_SITE_URL=<your-production-url>
+NEXT_PUBLIC_API_URL=<your-backend-url>/api/v1
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-project-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=<your-stripe-publishable-key>
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=<your-google-search-console-code>
 ```
 
 ### Backend (`backend/.env`)
 
+Copy `backend/.env.example` and fill in your values:
+
 ```env
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/clarte
-SUPABASE_JWT_SECRET=your-jwt-secret
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-INTERNAL_API_KEY=your-random-secret
-REDIS_URL=redis://localhost:6379
+DATABASE_URL=<your-supabase-postgres-connection-string>
+SUPABASE_JWT_SECRET=<your-supabase-jwt-secret>
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
+STRIPE_SECRET_KEY=<your-stripe-secret-key>
+STRIPE_WEBHOOK_SECRET=<your-stripe-webhook-secret>
+INTERNAL_API_KEY=<generate-a-random-secret>
+REDIS_URL=<your-upstash-redis-url>
 ENVIRONMENT=development
 DEBUG=true
 ```
@@ -231,7 +235,7 @@ DEBUG=true
 ### Frontend → Vercel
 
 1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import `Othmane-aoubid/clarte-website.` from GitHub
+2. Import your repo from GitHub
 3. Set **Root Directory** to `frontend`
 4. Add all `NEXT_PUBLIC_*` environment variables
 5. Deploy
@@ -292,7 +296,7 @@ DEBUG=true
 
 ## License
 
-Private — all rights reserved © 2024 Clarté.
+Private — all rights reserved © Clarté.
 
 ---
 
