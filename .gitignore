@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+backend/.venv/
+backend/venv/
+*.egg-info/
+dist/
+build/
+
+# Environment variables — NEVER commit
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+backend/.env
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.idea/
+*.swp
+.vscode/settings.json
+
+# Testing / cache
+coverage/
+frontend/node_modules/.cache/
+Devis-D202603-77.pdf
+*.png
+*.jpg

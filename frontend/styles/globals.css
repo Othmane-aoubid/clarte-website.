@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/Cairo-Variable.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 200 900;
+}
+
+@layer base {
+  :root {
+    --bg:           255 255 255;
+    --bg-alt:       248 250 252;
+    --bg-card:      255 255 255;
+    --border:       226 232 240;
+    --text:         15 23 42;
+    --text-muted:   100 116 139;
+    --brand:        46 134 193;
+    --brand-dark:   27 94 155;
+  }
+
+  .dark {
+    --bg:           13 17 23;
+    --bg-alt:       22 27 34;
+    --bg-card:      30 37 46;
+    --border:       48 54 61;
+    --text:         230 237 243;
+    --text-muted:   139 148 158;
+    --brand:        83 166 221;
+    --brand-dark:   94 182 240;
+  }
+
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+
+  [dir="ltr"] {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white dark:bg-[rgb(13,17,23)] text-[rgb(15,23,42)] dark:text-[rgb(230,237,243)];
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  img, svg, video {
+    transition: none !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

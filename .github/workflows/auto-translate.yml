@@ -1,0 +1,46 @@
+name: Auto-Translate
+
+# Triggers when fr.json is changed and pushed to main or any branch
+on:
+  push:
+    paths:
+      - 'frontend/messages/fr.json'
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit translated files back
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Use a token that can push back to the repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run translation script
+        working-directory: frontend
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node scripts/translate.js
+
+      - name: Commit translated files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/messages/ar.json frontend/messages/en.json frontend/messages/.translation-cache.json
+          # Only commit if there are changes
+          git diff --staged --quiet || git commit -m "chore: auto-translate ar.json and en.json from fr.json [skip ci]"
+          git push

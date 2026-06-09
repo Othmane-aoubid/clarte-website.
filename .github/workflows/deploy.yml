@@ -1,0 +1,24 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+      - name: Wait for deployment
+        run: sleep 60
+      - name: Health check
+        run: curl -f https://api.clarte.fr/api/v1/health
+
+  notify-success:
+    needs: [deploy-backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify deployment success
+        run: echo "Production deployment complete"
