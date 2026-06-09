@@ -298,6 +298,4 @@ DEBUG=true
 
 Private — all rights reserved © Clarté.
 
----
 
-<p align="center">Built with ❤️ for Clarté Services de Nettoyage</p>
