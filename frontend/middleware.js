@@ -9,13 +9,19 @@ export default function middleware(request) {
 
   // Guard admin routes — check for Supabase session cookie
   if (pathname.match(/\/(fr|ar|en)\/admin/)) {
-    const hasCookies = request.cookies.getAll()
-    const hasSession = hasCookies.some(
-      (c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token')
-    )
-    if (!hasSession) {
-      const locale = pathname.split('/')[1] || 'fr'
-      return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url))
+    try {
+      const hasCookies = request.cookies.getAll()
+      const hasSession = hasCookies.some(
+        (c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token')
+      )
+      
+      if (!hasSession) {
+        const locale = pathname.split('/')[1] || 'fr'
+        return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url))
+      }
+    } catch (error) {
+      // Catch any edge evaluation crashes silently to prevent 500 blocks
+      console.error("Auth Guard Failure:", error)
     }
   }
 
@@ -23,6 +29,6 @@ export default function middleware(request) {
 }
 
 export const config = {
+  // Safe exclusion boundary targeting structural paths and static file definitions
   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
-  runtime: "nodejs",
 }
