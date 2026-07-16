@@ -7,7 +7,15 @@ export async function Hero({ locale }) {
   const tNav = await getTranslations({ locale, namespace: 'nav' })
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600">
+    <section  className="relative min-h-screen flex items-center overflow-hidden"
+    style={{
+      backgroundImage:
+        "linear-gradient(rgba(10,25,47,.75), rgba(10,25,47,.75)), url('/images/project-macclean-featured-2.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat"
+    }}
+    >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-brand-500/20 blur-3xl" />

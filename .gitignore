@@ -52,3 +52,6 @@ frontend/node_modules/.cache/
 Devis-D202603-77.pdf
 *.png
 *.jpg
+
+# Local working docs - never push
+PROJECT_STATUS.md
