@@ -1,5 +1,5 @@
 const createNextIntlPlugin = require('next-intl/plugin')
-// const path = require('path')
+const path = require('path')
 
 const withNextIntl = createNextIntlPlugin('./i18n.js')
 
@@ -76,8 +76,10 @@ const nextConfig = {
   },
 
   // ── Webpack ────────────────────────────────────────────────────────────────
-  webpack(config) {
-    config.resolve.alias['@'] = path.resolve(__dirname)
+  webpack(config, { isServer, nextRuntime }) {
+    if (nextRuntime !== 'edge') {
+      config.resolve.alias['@'] = path.resolve(__dirname)
+    }
     return config
   },
 }
