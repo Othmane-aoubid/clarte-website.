@@ -1,7 +1,5 @@
 {
     "$schema": "https://vercel.sh",
-    "framework": "nextjs",
-    "buildCommand": "npm install --ignore-scripts && npm run build",
-    "installCommand": "npm install --ignore-scripts"
-  }
-  
+    "rootDirectory": "frontend",
+    "framework": "nextjs"
+}
