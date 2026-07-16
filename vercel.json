@@ -2,9 +2,9 @@
   "services": {
     "frontend": {
       "root": "frontend",
-      "framework": "nextjs"
+      "framework": "nextjs",
+      "buildCommand": "npm install --ignore-scripts && npm run build",
+      "installCommand": "npm install --ignore-scripts"
     }
-  },
-  "buildCommand": "npm install --ignore-scripts && npm run build",
-  "installCommand": "npm install --ignore-scripts"
+  }
 }
