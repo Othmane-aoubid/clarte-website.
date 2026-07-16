@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin('./i18n.js')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  //output: 'standalone',
 
   images: {
     remotePatterns: [
@@ -76,8 +76,10 @@ const nextConfig = {
   },
 
   // ── Webpack ────────────────────────────────────────────────────────────────
-  webpack(config) {
-    config.resolve.alias['@'] = path.resolve(__dirname)
+  webpack(config, { isServer, nextRuntime }) {
+    if (nextRuntime !== 'edge') {
+      config.resolve.alias['@'] = path.resolve(__dirname)
+    }
     return config
   },
 }
