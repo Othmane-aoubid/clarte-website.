@@ -73,12 +73,6 @@ const nextConfig = {
       },
     ]
   },
-
-  // ── Webpack ────────────────────────────────────────────────────────────────
-  webpack(config) {
-    config.resolve.alias['@'] = './';
-    return config;
-  },
 }
 
 module.exports = withNextIntl(nextConfig)
