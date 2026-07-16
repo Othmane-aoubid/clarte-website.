@@ -73,6 +73,12 @@ const nextConfig = {
       },
     ]
   },
+
+  // ── Webpack Alias Fallback ──────────────────────────────────────────────────
+  webpack(config) {
+    config.resolve.alias['@'] = process.cwd();
+    return config;
+  },
 }
 
 module.exports = withNextIntl(nextConfig)
