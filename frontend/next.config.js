@@ -1,11 +1,6 @@
 const createNextIntlPlugin = require('next-intl/plugin')
-const path = require('path')
-import { fileURLToPath } from 'url';
 
 const withNextIntl = createNextIntlPlugin('./i18n.js')
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -52,7 +47,7 @@ const nextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "connect-src 'self' https://*.supabase.co https://api.stripe.com",
+              "connect-src 'self' https://*.supabase.co https://stripe.com",
             ].join('; '),
           },
         ],
@@ -80,11 +75,9 @@ const nextConfig = {
   },
 
   // ── Webpack ────────────────────────────────────────────────────────────────
-  webpack(config, { isServer, nextRuntime }) {
-    if (nextRuntime !== 'edge') {
-      config.resolve.alias['@'] = path.resolve(__dirname)
-    }
-    return config
+  webpack(config) {
+    config.resolve.alias['@'] = './';
+    return config;
   },
 }
 
